@@ -5,13 +5,15 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lk_case2_db
+      # Используем переменные окружения из Jenkins
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lk_case2_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d lk_case2_db"]
+      # Проверка готовности БД
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-lk_case2_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,17 +25,32 @@ services:
     container_name: lk-case2-backend
     restart: always
     ports:
-      - "8999:8999"
+      # Проброс порта для API
+      - "${PORT:-8999}:${PORT:-8999}"
     environment:
+      # Настройки подключения к БД. 'db' - имя сервиса.
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lk_case2_db
-      ASPNETCORE_URLS: http://+:8999
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lk_case2_db}
+      ASPNETCORE_URLS: http://+:${PORT:-8999}
     depends_on:
       db:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: lk-case2-frontend
+    restart: always
+    ports:
+      # Фронтенд будет доступен на порту 80 хоста
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_started
 
 volumes:
   postgres_data:
