@@ -23,7 +23,7 @@ namespace Account.api.Controllers
             _groupService = groupService;
         }
 
-        [HttpGet]
+        [HttpGet("getGroups")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<CollectionResult<GroupsDto>>> GetGroupsAsync()
         {
@@ -36,7 +36,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPost("createGroup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<Group>>> CreateGroupAsync([FromBody] CreateGroupDto dto)
@@ -50,7 +50,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteGroup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<GroupDto>>> DeleteGroupAsync(long id)
@@ -64,7 +64,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut]
+        [HttpPut("updateGroup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<GroupDto>>> UpdateGroupAsync([FromBody] GroupDto dto)

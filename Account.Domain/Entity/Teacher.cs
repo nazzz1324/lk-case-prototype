@@ -14,6 +14,7 @@ namespace Account.Domain.Entity
         public string Firstname { get; set; }//
         public string Lastname { get; set; }//
         public string? Middlename { get; set; }//
+        public bool IsActive { get; set; } = true;
 
         public User User { get; set; }//
         public ICollection<Discipline> Disciplines { get; set; } = new List<Discipline>();//

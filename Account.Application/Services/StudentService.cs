@@ -26,14 +26,18 @@ namespace Account.Application.Services
         private readonly IBaseRepository<IndicatorScore> _indicatorScoreRepository;
         private readonly IBaseRepository<Group> _groupRepository;
         private readonly IBaseRepository<Competence> _competenceRepository;
-        private readonly IBaseRepository<CompetenceScore> _competenceScoreRepository;
+        private readonly IBaseRepository<CompetenceScore> _competenceScoreRepository; 
+        private readonly IBaseRepository<StudentIndicatorDisciplineScore> _studentIndicatorDisciplineScoreRepository;
+        private readonly IBaseRepository<ProfessionalRole> _proleRepository; 
+        private readonly IBaseRepository<CompetenceProle> _competenceProleRepository;
         private readonly ILogger _logger;
 
-        public StudentService(IBaseRepository<Student> studentRepository, IBaseRepository<Teacher> teacherRepository, 
-            IBaseRepository<Discipline> disciplineRepository, IBaseRepository<Indicator> indicatorRepository, 
+        public StudentService(IBaseRepository<Student> studentRepository, IBaseRepository<Teacher> teacherRepository,
+            IBaseRepository<Discipline> disciplineRepository, IBaseRepository<Indicator> indicatorRepository,
             IBaseRepository<DisciplineScore> disciplineScoreRepository, IBaseRepository<IndicatorScore> indicatorScoreRepository,
-            IBaseRepository<Group> groupRepository, IBaseRepository<Competence> competenceRepository, 
-            IBaseRepository<CompetenceScore> competenceScoreRepository, ILogger logger)
+            IBaseRepository<Group> groupRepository, IBaseRepository<Competence> competenceRepository,
+            IBaseRepository<CompetenceScore> competenceScoreRepository, ILogger logger,
+            IBaseRepository<StudentIndicatorDisciplineScore> studentIndicatorDisciplineScoreRepository, IBaseRepository<ProfessionalRole> proleRepository, IBaseRepository<CompetenceProle> competenceProleRepository)
         {
             _studentRepository = studentRepository;
             _teacherRepository = teacherRepository;
@@ -45,6 +49,9 @@ namespace Account.Application.Services
             _competenceRepository = competenceRepository;
             _competenceScoreRepository = competenceScoreRepository;
             _logger = logger;
+            _studentIndicatorDisciplineScoreRepository = studentIndicatorDisciplineScoreRepository;
+            _proleRepository = proleRepository;
+            _competenceProleRepository = competenceProleRepository;
         }
 
         public async Task<CollectionResult<StudentDisciplinesDto>> GetStudentDisciplinesAsync(long studentId)
@@ -165,8 +172,12 @@ namespace Account.Application.Services
                 .FirstOrDefaultAsync(ds => ds.DisciplineId == disciplineId && ds.StudentId == studentId);
 
             var indicatorIds = discipline.Indicators.Select(i => i.Id).ToList();
-            var indicatorScores = await _indicatorScoreRepository.GetAll()
-                .Where(score => score.StudentId == studentId && indicatorIds.Contains(score.IndicatorId))
+
+            // ИЗМЕНЕНИЕ ТОЛЬКО ЭТОЙ СТРОКИ:
+            var indicatorScores = await _studentIndicatorDisciplineScoreRepository.GetAll()
+                .Where(score => score.StudentId == studentId &&
+                               score.DisciplineId == disciplineId && // ← добавляем фильтр по дисциплине
+                               indicatorIds.Contains(score.IndicatorId))
                 .ToListAsync();
 
             var indicatorDtos = new List<DisciplineIndicatorScoreDto>();
@@ -180,7 +191,7 @@ namespace Account.Application.Services
                     Id = indicator.Id,
                     Index = indicator.Index,
                     Name = indicator.Name,
-                    Score = indicatorScore?.ScoreValue
+                    Score = indicatorScore != null ? (int?)indicatorScore.Score : null // ← оставляем int
                 });
             }
 
@@ -188,7 +199,7 @@ namespace Account.Application.Services
             {
                 Name = discipline.Name,
                 Indicators = indicatorDtos,
-                DisciplineScore = disciplineScore?.Score
+                Score = disciplineScore?.Score
             };
 
             _logger.Information("Получены оценки по дисциплине {DisciplineId} для студента {StudentId}",
@@ -199,60 +210,151 @@ namespace Account.Application.Services
                 Data = result
             };
         }
+        public async Task<BaseResult<StudentCompetenceScoresDto>> GetCompetenceScoresAsync(long competenceId, long studentId)
+        {
+            // 1. Получаем компетенцию с индикаторами
+            var competence = await _competenceRepository.GetAll()
+                .Include(c => c.Indicators)
+                .FirstOrDefaultAsync(c => c.Id == competenceId);
+
+            if (competence == null)
+                throw new ExceptionResult(ErrorCodes.CompetenceNotFound, ErrorMessage.CompetenceNotFound);
+
+            var indicatorIds = competence.Indicators.Select(i => i.Id).ToList();
+            var indicatorDtos = new List<CompetenceIndicatorScore>();
+            decimal competenceProgress = 0;
+
+            // 2. Если есть индикаторы - считаем прогресс
+            if (indicatorIds.Any())
+            {
+                // Получаем оценки студента по индикаторам компетенции
+                var studentScores = await _indicatorScoreRepository.GetAll()
+                    .Where(s => s.StudentId == studentId && indicatorIds.Contains(s.IndicatorId))
+                    .GroupBy(s => s.IndicatorId)
+                    .Select(g => new
+                    {
+                        IndicatorId = g.Key,
+                        AverageScore = g.Average(s => (decimal?)s.ScoreValue) ?? 0
+                    })
+                    .ToListAsync();
+
+                // Создаем DTO для индикаторов и считаем сумму баллов
+                decimal totalScore = 0;
+
+                foreach (var indicator in competence.Indicators)
+                {
+                    var studentScore = studentScores.FirstOrDefault(s => s.IndicatorId == indicator.Id);
+                    var scoreValue = studentScore?.AverageScore ?? 0;
+
+                    indicatorDtos.Add(new CompetenceIndicatorScore
+                    {
+                        Id = indicator.Id,
+                        Index = indicator.Index,
+                        Name = indicator.Name,
+                        Score = scoreValue > 0 ? (decimal?)scoreValue : null
+                    });
+
+                    // Суммируем баллы (0-5 за каждый индикатор)
+                    totalScore += scoreValue;
+                }
+
+                // Рассчитываем прогресс компетенции
+                decimal maxPossibleScore = 5 * indicatorIds.Count;
+                competenceProgress = maxPossibleScore > 0
+                    ? Math.Round((totalScore / maxPossibleScore) * 100, 0)
+                    : 0;
+            }
+
+            // 3. Сохраняем/обновляем прогресс в CompetenceScore
+            var competenceScore = await _competenceScoreRepository.GetAll()
+                .FirstOrDefaultAsync(cs => cs.StudentId == studentId && cs.CompetenceId == competenceId);
+
+            if (competenceScore != null)
+            {
+                competenceScore.Score = competenceProgress;
+                _competenceScoreRepository.Update(competenceScore);
+            }
+            else
+            {
+                var newCompetenceScore = new CompetenceScore
+                {
+                    StudentId = studentId,
+                    CompetenceId = competenceId,
+                    Score = competenceProgress,
+                };
+                await _competenceScoreRepository.CreateAsync(newCompetenceScore);
+            }
+
+            await _competenceScoreRepository.SaveChangesAsync();
+
+            // 4. Возвращаем результат
+            var result = new StudentCompetenceScoresDto
+            {
+                Name = competence.Name,
+                Indicators = indicatorDtos,
+                Score = competenceProgress
+            };
+
+            _logger.Information("Получены оценки по компетенции {CompetenceId} для студента {StudentId}. Прогресс: {Progress}%",
+                competenceId, studentId, competenceProgress);
+
+            return new BaseResult<StudentCompetenceScoresDto>
+            {
+                Data = result
+            };
+        }
+
 
         public async Task<CollectionResult<StudentCompetencesDto>> GetStudentCompetencesAsync(long studentId)
         {
+            // Проверяем существование студента
             var student = await _studentRepository.GetAll()
                 .FirstOrDefaultAsync(s => s.Id == studentId);
 
             if (student == null)
             {
                 _logger.Error("Студент не найден. Id: {StudentId}", studentId);
-                throw new ExceptionResult(
-                    ErrorCodes.StudentNotFound,
-                    ErrorMessage.StudentNotFound
-                );
+                throw new ExceptionResult(ErrorCodes.StudentNotFound, ErrorMessage.StudentNotFound);
             }
 
-            var allCompetences = await _competenceRepository.GetAll()
+            // Получаем все компетенции
+            var competences = await _competenceRepository.GetAll()
                 .Include(c => c.Indicators)
                 .ToListAsync();
 
             var result = new List<StudentCompetencesDto>();
 
-            foreach (var competence in allCompetences)
+            foreach (var competence in competences)
             {
                 var indicatorIds = competence.Indicators.Select(i => i.Id).ToList();
-                var indicatorScores = await _indicatorScoreRepository.GetAll()
-                    .Where(score => score.StudentId == studentId && indicatorIds.Contains(score.IndicatorId))
-                    .ToListAsync();
-
                 decimal progress = 0;
-                if (indicatorIds.Count > 0)
-                {
-                    var scoredCount = indicatorScores.Count(score => score.ScoreValue != null);
-                    progress = Math.Round((decimal)scoredCount / indicatorIds.Count * 100);
-                }
 
-                var competenceScore = await _competenceScoreRepository.GetAll()
-                    .FirstOrDefaultAsync(cs => cs.CompetenceId == competence.Id && cs.StudentId == studentId);
-
-                if (competenceScore == null)
+                if (indicatorIds.Any())
                 {
-                    competenceScore = new CompetenceScore
+                    // Читаем из IndicatorScore (куда пишет SaveScoresAsync)
+                    var studentScores = await _indicatorScoreRepository.GetAll()
+                        .Where(s => s.StudentId == studentId &&
+                                   indicatorIds.Contains(s.IndicatorId))
+                        .GroupBy(s => s.IndicatorId)
+                        .Select(g => new
+                        {
+                            IndicatorId = g.Key,
+                            AverageScore = g.Average(s => (decimal?)s.ScoreValue) ?? 0
+                        })
+                        .ToListAsync();
+
+                    
+                    decimal totalScore = 0;
+                    foreach (var indicatorId in indicatorIds)
                     {
-                        CompetenceId = competence.Id,
-                        StudentId = studentId,
-                        Score = progress,
-                    };
-                    await _competenceScoreRepository.CreateAsync(competenceScore);
-                    await _competenceScoreRepository.SaveChangesAsync();
-                }
-                else if (competenceScore.Score != progress)
-                {
-                    competenceScore.Score = progress;
-                    _competenceScoreRepository.Update(competenceScore);
-                    await _competenceScoreRepository.SaveChangesAsync();
+                        var score = studentScores.FirstOrDefault(s => s.IndicatorId == indicatorId);
+                        totalScore += score?.AverageScore ?? 0; 
+                    }
+
+                    decimal maxPossibleScore = 5 * indicatorIds.Count;
+                    progress = maxPossibleScore > 0
+                        ? Math.Round((totalScore / maxPossibleScore) * 100, 0)
+                        : 0;
                 }
 
                 result.Add(new StudentCompetencesDto
@@ -264,14 +366,84 @@ namespace Account.Application.Services
                 });
             }
 
-            _logger.Information("Получены компетенции студента {StudentId}. Количество: {Count}",
-                studentId, result.Count);
-
             return new CollectionResult<StudentCompetencesDto>
+            {
+                Data = result,
+            };
+        }
+
+        public async Task<BaseResult<StudentProlesDto>> GetStudentProlesAsync(long studentId)
+        {
+            // 1. Проверяем студента
+            var student = await _studentRepository.GetAll()
+                .Include(s => s.Group)
+                .FirstOrDefaultAsync(s => s.Id == studentId);
+
+            if (student == null)
+                throw new ExceptionResult(ErrorCodes.StudentNotFound, ErrorMessage.StudentNotFound);
+
+            // 2. Получаем группу студента
+            var group = student.Group;
+            if (group == null)
+                throw new ExceptionResult(ErrorCodes.StudentDoesNotHaveGroup, ErrorMessage.StudentDoesNotHaveGroup);
+
+            // 3. Получаем профроль группы
+            var prole = await _proleRepository.GetAll()
+                .FirstOrDefaultAsync(p => p.Id == group.ProleId);
+
+            if (prole == null)
+                throw new ExceptionResult(ErrorCodes.GroupDoesNotHaveProle, "У группы не назначена профроль");
+
+            // 4. Получаем компетенции профроли через репозиторий CompetenceProle
+            var competenceIds = await _competenceProleRepository.GetAll()
+                .Where(cp => cp.ProleId == prole.Id)
+                .Select(cp => cp.CompetenceId)
+                .ToListAsync();
+
+            // 5. Получаем прогресс студента по компетенциям
+            var competenceScores = await _competenceScoreRepository.GetAll()
+                .Where(cs => cs.StudentId == studentId && competenceIds.Contains(cs.CompetenceId))
+                .ToListAsync();
+
+            // 6. Рассчитываем статистику
+            decimal? averageScore = null;
+            int completedCount = 0;
+            List<long> competencies = new List<long>();
+
+            if (competenceIds.Any())
+            {
+                competencies = competenceIds;
+
+                if (competenceScores.Any())
+                {
+                    averageScore = Math.Round(competenceScores.Average(cs => (decimal?)cs.Score) ?? 0, 1);
+                    completedCount = competenceScores.Count(cs => cs.Score >= 60);
+                }
+                else
+                {
+                    averageScore = 0;
+                    completedCount = 0;
+                }
+            }
+
+            // 7. Формируем результат
+            var result = new StudentProlesDto
+            {
+                Id = prole.Id,
+                Name = prole.Name,
+                Index = prole.Index,
+                Score = averageScore,
+                Competencies = competencies,
+                CompletedCompetenciesCount = completedCount
+            };
+
+            _logger.Information("Получена профроль студента {StudentId}. Компетенций: {Count}, Прогресс: {Progress}%",
+                studentId, competencies.Count, averageScore);
+
+            return new BaseResult<StudentProlesDto>
             {
                 Data = result
             };
         }
-
     }
 }

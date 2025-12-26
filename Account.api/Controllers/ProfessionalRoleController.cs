@@ -22,7 +22,7 @@ namespace Account.api.Controllers
             _proleService = proleService;
         }
 
-        [HttpGet]
+        [HttpGet("getProles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<CollectionResult<ProfessionalRolesDto>>> GetProfessionalRolesAsync()
         {
@@ -35,7 +35,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPost("createProle")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<ProfessionalRole>>> CreateProfessionalRoleAsync([FromBody] CreateProfessionalRoleDto dto)
@@ -49,7 +49,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteProle")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<ProfessionalRoleDto>>> DeleteProfessionalRoleAsync(long id)
@@ -63,7 +63,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut]
+        [HttpPut("updateProle")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<ProfessionalRoleDto>>> UpdateProfessionalRoleAsync([FromBody] ProfessionalRoleDto dto)

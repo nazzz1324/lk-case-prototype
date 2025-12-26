@@ -22,7 +22,7 @@ namespace Account.Application.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ErrorMessage {
+    public class ErrorMessage {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Account.Application.Resources {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Account.Application.Resources.ErrorMessage", typeof(ErrorMessage).Assembly);
@@ -51,7 +51,7 @@ namespace Account.Application.Resources {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на CompetenceAlreadyExists.
         /// </summary>
-        internal static string CompetenceAlreadyExists {
+        public static string CompetenceAlreadyExists {
             get {
                 return ResourceManager.GetString("CompetenceAlreadyExists", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на CompetenceNotFound.
         /// </summary>
-        internal static string CompetenceNotFound {
+        public static string CompetenceNotFound {
             get {
                 return ResourceManager.GetString("CompetenceNotFound", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на DisciplineAlreadyExists.
         /// </summary>
-        internal static string DisciplineAlreadyExists {
+        public static string DisciplineAlreadyExists {
             get {
                 return ResourceManager.GetString("DisciplineAlreadyExists", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на DisciplineNotFound.
         /// </summary>
-        internal static string DisciplineNotFound {
+        public static string DisciplineNotFound {
             get {
                 return ResourceManager.GetString("DisciplineNotFound", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на GroupAlreadyExists.
         /// </summary>
-        internal static string GroupAlreadyExists {
+        public static string GroupAlreadyExists {
             get {
                 return ResourceManager.GetString("GroupAlreadyExists", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на GroupDoesNotHaveThisDiscipline.
         /// </summary>
-        internal static string GroupDoesNotHaveThisDiscipline {
+        public static string GroupDoesNotHaveThisDiscipline {
             get {
                 return ResourceManager.GetString("GroupDoesNotHaveThisDiscipline", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на GroupNotFound.
         /// </summary>
-        internal static string GroupNotFound {
+        public static string GroupNotFound {
             get {
                 return ResourceManager.GetString("GroupNotFound", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на IndicatorAlreadyExists.
         /// </summary>
-        internal static string IndicatorAlreadyExists {
+        public static string IndicatorAlreadyExists {
             get {
                 return ResourceManager.GetString("IndicatorAlreadyExists", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на IndicatorNotFound.
         /// </summary>
-        internal static string IndicatorNotFound {
+        public static string IndicatorNotFound {
             get {
                 return ResourceManager.GetString("IndicatorNotFound", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Внутренняя ошибка сервера.
         /// </summary>
-        internal static string InternalServerError {
+        public static string InternalServerError {
             get {
                 return ResourceManager.GetString("InternalServerError", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на InvalidRequest.
         /// </summary>
-        internal static string InvalidRequest {
+        public static string InvalidRequest {
             get {
                 return ResourceManager.GetString("InvalidRequest", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid Indicator Score (Max value 5).
         /// </summary>
-        internal static string InvalidScore {
+        public static string InvalidScore {
             get {
                 return ResourceManager.GetString("InvalidScore", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Invalid token.
         /// </summary>
-        internal static string InvalidToken {
+        public static string InvalidToken {
             get {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Password is wrong.
         /// </summary>
-        internal static string PasswordIsWrong {
+        public static string PasswordIsWrong {
             get {
                 return ResourceManager.GetString("PasswordIsWrong", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Password not equals password confirm.
         /// </summary>
-        internal static string PasswordNotEqualsPasswordConfirm {
+        public static string PasswordNotEqualsPasswordConfirm {
             get {
                 return ResourceManager.GetString("PasswordNotEqualsPasswordConfirm", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на ProleAlreadyExists.
         /// </summary>
-        internal static string ProleAlreadyExists {
+        public static string ProleAlreadyExists {
             get {
                 return ResourceManager.GetString("ProleAlreadyExists", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на ProleNotFound.
         /// </summary>
-        internal static string ProleNotFound {
+        public static string ProleNotFound {
             get {
                 return ResourceManager.GetString("ProleNotFound", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Role already exists.
         /// </summary>
-        internal static string RoleAlreadyExists {
+        public static string RoleAlreadyExists {
             get {
                 return ResourceManager.GetString("RoleAlreadyExists", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Role not found.
         /// </summary>
-        internal static string RoleNotFound {
+        public static string RoleNotFound {
             get {
                 return ResourceManager.GetString("RoleNotFound", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Student does not have a group.
         /// </summary>
-        internal static string StudentDoesNotHaveGroup {
+        public static string StudentDoesNotHaveGroup {
             get {
                 return ResourceManager.GetString("StudentDoesNotHaveGroup", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на StudentNotFound.
         /// </summary>
-        internal static string StudentNotFound {
+        public static string StudentNotFound {
             get {
                 return ResourceManager.GetString("StudentNotFound", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на TeacherAlreadyExists.
         /// </summary>
-        internal static string TeacherAlreadyExists {
+        public static string TeacherAlreadyExists {
             get {
                 return ResourceManager.GetString("TeacherAlreadyExists", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на TeacherDoesNotTeachThisDiscipline.
         /// </summary>
-        internal static string TeacherNoAccess {
+        public static string TeacherNoAccess {
             get {
                 return ResourceManager.GetString("TeacherNoAccess", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на TeacherNotFound.
         /// </summary>
-        internal static string TeacherNotFound {
+        public static string TeacherNotFound {
             get {
                 return ResourceManager.GetString("TeacherNotFound", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на User already exists.
         /// </summary>
-        internal static string UserAlreadyExists {
+        public static string UserAlreadyExists {
             get {
                 return ResourceManager.GetString("UserAlreadyExists", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на User already exists this role.
         /// </summary>
-        internal static string UserAlreadyExistsThisRole {
+        public static string UserAlreadyExistsThisRole {
             get {
                 return ResourceManager.GetString("UserAlreadyExistsThisRole", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace Account.Application.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на User not found.
         /// </summary>
-        internal static string UserNotFound {
+        public static string UserNotFound {
             get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
             }

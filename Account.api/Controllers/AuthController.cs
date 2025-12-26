@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Account.api.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -26,7 +27,7 @@ namespace Account.api.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<BaseResult<UserDto>>> Register([FromBody]RegisterUserDto dto)
+        public async Task<ActionResult<BaseResult<bool>>> Register([FromBody]RegisterUserDto dto)
         {
             var response = await _authService.Register(dto);
 

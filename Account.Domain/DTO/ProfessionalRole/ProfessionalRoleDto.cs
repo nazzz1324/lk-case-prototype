@@ -11,6 +11,6 @@ namespace Account.Domain.DTO.ProfessionalRole
         public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<long> CompetenceIds { get; set; } = new();
+        public List<long> Competencies { get; set; } = new();
     }
 }

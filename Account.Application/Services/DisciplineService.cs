@@ -51,6 +51,7 @@ namespace Account.Application.Services
             discipline = new Discipline
             {
                 Name = dto.Name,
+                Index = dto.Index,
             };
 
             await _disciplineRepository.CreateAsync(discipline);
@@ -107,29 +108,32 @@ namespace Account.Application.Services
         public async Task<CollectionResult<DisciplinesDto>> GetDisciplinesAsync()
         {
             var disciplines = await _disciplineRepository.GetAll()
-                .Include(d => d.Indicators)  
-                .Select(d => new DisciplinesDto
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    IndicatorCount = d.Indicators.Count  
-                })
-                .ToArrayAsync();
+                .Include(d => d.Indicators)
+                .ToListAsync();
 
-            if (disciplines.Length == 0)
+            if (disciplines.Count == 0)
             {
                 _logger.Information("Список дисциплин пуст");
                 return new CollectionResult<DisciplinesDto>
                 {
-                    Data = disciplines,
+                    Data = new List<DisciplinesDto>()
                 };
             }
 
-            _logger.Information("Получено дисциплин: {Count}", disciplines.Length);
+            _logger.Information("Получено дисциплин: {Count}", disciplines.Count);
+
+            var disciplinesDto = disciplines.Select(d => new DisciplinesDto
+            {
+                Id = d.Id,
+                Index = d.Index,
+                Name = d.Name,
+                IndicatorCount = d.Indicators.Count,
+                IndicatorIds = d.Indicators.Select(i => i.Id).ToList()
+            }).ToList();
 
             return new CollectionResult<DisciplinesDto>
             {
-                Data = disciplines
+                Data = disciplinesDto
             };
         }
 
@@ -149,6 +153,7 @@ namespace Account.Application.Services
             }
 
             discipline.Name = dto.Name;
+            discipline.Index = dto.Index;
 
             var indicatorsToAttach = await _indicatorRepository.GetAll()
                 .Where(x => dto.IndicatorIds.Contains(x.Id))

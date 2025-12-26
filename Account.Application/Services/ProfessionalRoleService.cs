@@ -121,7 +121,9 @@ namespace Account.Application.Services
 
                     CompetenceIndexes = x.Competences
                         .Select(d => d.Index)
-                        .ToList()
+                        .ToList(),
+
+                    Competencies =  x.Competences.Select(c => c.Id).ToList()
                 })
                 .ToArrayAsync();
 
@@ -161,7 +163,7 @@ namespace Account.Application.Services
             prole.Description = dto.Description;
 
             var competences = await _competenceRepository.GetAll()
-                .Where(x => dto.CompetenceIds.Contains(x.Id))
+                .Where(x => dto.Competencies.Contains(x.Id))
                 .ToListAsync();
 
             prole.Competences.Clear();

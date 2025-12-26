@@ -16,9 +16,16 @@ namespace Account.Application.Mapping
 {
     public class CompetenceMapping : Profile
     {
-        public CompetenceMapping() 
+        public CompetenceMapping()
         {
-            CreateMap<Competence, CompetenceDto>();
+            CreateMap<Competence, CompetenceDto>()
+                .ForMember(dest => dest.Indicators,
+                    opt => opt.MapFrom(src => src.Indicators.Select(i => i.Id).ToList()));
+
+            CreateMap<CompetenceDto, Competence>()
+                .ForMember(dest => dest.Indicators,
+                    opt => opt.MapFrom(src => src.Indicators.Select(id => new Indicator { Id = id }).ToList()));
+
             CreateMap<CreateCompetenceDto, Competence>();
         }
     }

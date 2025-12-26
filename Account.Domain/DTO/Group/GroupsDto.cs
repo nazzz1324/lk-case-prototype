@@ -10,7 +10,8 @@ namespace Account.Domain.DTO.Group
     {
         public long Id {  get; set; }
         public string Name { get; set; }
-        public int StudentsCount { get; set; }
+        public int studentCount { get; set; }
         public string Curator { get; set; }
+        public List<long> students { get; set; } = new();
     }
 }

@@ -8,7 +8,7 @@ import {
   Target,
   Pin,
   Link as LinkIcon,
-  Briefcase, // New import for Professions
+  Briefcase,
   LogOut,
   Menu,
   X,
@@ -31,14 +31,14 @@ const allNavItems: NavItem[] = [
   { id: "disciplines", label: "Дисциплины", icon: <BookOpen size={20} />, href: "/disciplines", roles: ["admin"] },
   { id: "competencies", label: "Компетенции", icon: <Target size={20} />, href: "/competencies", roles: ["admin"] },
   { id: "indicators", label: "Индикаторы", icon: <Pin size={20} />, href: "/indicators", roles: ["admin"] },
-  { id: "professions", label: "Профессии", icon: <Briefcase size={20} />, href: "/professions", roles: ["admin"] }, // New Admin Page
+  { id: "professions", label: "Профессии", icon: <Briefcase size={20} />, href: "/professions", roles: ["admin"] },
   // Teacher Pages
   { id: "teacher-disciplines", label: "Мои дисциплины", icon: <BookOpen size={20} />, href: "/teacher/disciplines", roles: ["teacher"] },
   // Student Pages
   { id: "student-profile", label: "Мой профиль", icon: <Users size={20} />, href: "/student/profile", roles: ["student"] },
   { id: "student-disciplines", label: "Дисциплины и оценки", icon: <BookOpen size={20} />, href: "/student/disciplines", roles: ["student"] },
   { id: "student-competencies", label: "Освоение компетенций", icon: <Target size={20} />, href: "/student/competencies", roles: ["student"] },
-  { id: "student-professions", label: "Мои Профессии", icon: <Briefcase size={20} />, href: "/student/professions", roles: ["student"] }, // New Student Page
+  { id: "student-professions", label: "Мои Профессии", icon: <Briefcase size={20} />, href: "/student/professions", roles: ["student"] },
 ];
 
 export default function Sidebar() {
@@ -88,29 +88,29 @@ export default function Sidebar() {
         {/* Logo Area */}
         <div className="h-20 flex items-center justify-center border-b border-sidebar-border px-4">
           <div className="text-center">
-	            <div className="text-xl font-bold text-sidebar-primary">CP</div>
-	            {!isCollapsed && <div className="text-xs text-sidebar-foreground/60">{userRole === "admin" ? "Администратор" : userRole === "teacher" ? "Преподаватель" : userRole === "student" ? "Студент" : "Профиль"}</div>}
-	          </div>
-	        </div>
-	
-	        {/* Navigation */}
-	        <nav className="flex-1 overflow-y-auto py-4">
-	          {navItems.map((item) => (
-            <Link key={item.id} href={item.href}>
-              <a
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all relative ${
-                  isActive(item.href)
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-                }`}
-              >
-                {isActive(item.href) && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-sidebar-primary rounded-r-full" />
-                )}
-                <span className="flex-shrink-0">{item.icon}</span>
-                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
-              </a>
+            <div className="text-xl font-bold text-sidebar-primary">CP</div>
+            {!isCollapsed && <div className="text-xs text-sidebar-foreground/60">{userRole === "admin" ? "Администратор" : userRole === "teacher" ? "Преподаватель" : userRole === "student" ? "Студент" : "Профиль"}</div>}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto py-4">
+          {navItems.map((item) => (
+            <Link 
+              key={item.id} 
+              href={item.href}
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all relative ${
+                isActive(item.href)
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+              }`}
+            >
+              {isActive(item.href) && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-sidebar-primary rounded-r-full" />
+              )}
+              <span className="flex-shrink-0">{item.icon}</span>
+              {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
             </Link>
           ))}
         </nav>
