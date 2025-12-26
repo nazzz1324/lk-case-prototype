@@ -15,7 +15,9 @@ namespace Account.Application.Mapping
     {
         public GroupMapping()
         {
-            CreateMap<Group, GroupDto>();
+            CreateMap<Group, GroupDto>()
+                .ForMember(dest => dest.students,
+                    opt => opt.MapFrom(src => src.Students.Select(s => s.Id).ToList()));
             CreateMap<CreateGroupDto, Group>();
         }
     }

@@ -19,21 +19,36 @@ namespace Account.api.Controllers
             _teacherService = teacherService;
         }
 
-        [HttpGet("disciplines/{teacherId}")]
+        [HttpGet("getDisciplines")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CollectionResult<TeacherDisciplineDto>>> GetTeacherDisciplinesAsync(long teacherId)
         {
-            var response = await _teacherService.GetTeacherDisciplinesAsync(teacherId);
-
-            if (response.IsSuccess)
+            try
             {
-                return Ok(response);
+                var response = await _teacherService.GetTeacherDisciplinesAsync(teacherId);
+
+                if (response.IsSuccess)
+                {
+                    return Ok(response);
+                }
+                
+                // Если преподаватель не найден, возвращаем 404
+                if (response.ErrorCode == 92) // TeacherNotFound
+                {
+                    return NotFound(response);
+                }
+                
+                return BadRequest(response);
             }
-            return BadRequest(response);
+            catch (Exception ex)
+            {
+                return BadRequest(new { isSuccess = false, message = ex.Message });
+            }
         }
 
-        [HttpGet("scoring")]
+        [HttpGet("getScoringData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<ScoringDataDto>>> GetScoringDataAsync([FromQuery] ScoringFilterDto filter)
@@ -47,7 +62,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut("scores")]
+        [HttpPut("saveScores")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<bool>>> SaveScoresAsync([FromBody] SaveScoresDto dto)

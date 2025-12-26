@@ -111,6 +111,7 @@ namespace Account.Application.Services
         public async Task<CollectionResult<CompetencesDto>> GetCompetencesAsync()
         {
             var competences = await _competenceRepository.GetAll()
+                .Include(c => c.Indicators)  // ← ВАЖНО: включаем индикаторы
                 .ToArrayAsync();
 
             if (competences.Length == 0)
@@ -129,7 +130,8 @@ namespace Account.Application.Services
                 Id = c.Id,
                 Index = c.Index,
                 Name = c.Name,
-                Description = c.Description
+                Description = c.Description,
+                Indicators = c.Indicators.Select(i => i.Id).ToList()  // ← массив ID индикаторов
             }).ToArray();
 
             return new CollectionResult<CompetencesDto>
@@ -158,7 +160,7 @@ namespace Account.Application.Services
             competence.Description = dto.Description;
 
             var indicatorsToAttach = await _indicatorRepository.GetAll()
-                .Where(x => dto.IndicatorIds.Contains(x.Id)) 
+                .Where(x => dto.Indicators.Contains(x.Id)) 
                 .ToListAsync();
 
             foreach (var currentIndicator in competence.Indicators.ToList())

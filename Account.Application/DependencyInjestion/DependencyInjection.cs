@@ -33,6 +33,7 @@ namespace Account.Application.DependencyInjection
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
     }

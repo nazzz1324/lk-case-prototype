@@ -5,13 +5,16 @@ WORKDIR /app
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Копируем файлы для установки зависимостей
-COPY client/package.json client/pnpm-lock.yaml ./client/
+# Копируем только package.json
+COPY client/package.json ./client/
+
+# Копируем остальной код
 COPY client/ .
 
 # Устанавливаем зависимости и собираем проект
 WORKDIR /app/client
-RUN pnpm install --frozen-lockfile
+# Удаляем --frozen-lockfile, чтобы разрешить установку без lock-файла
+RUN pnpm install
 RUN pnpm run build
 
 # Final stage: Nginx to serve the static files

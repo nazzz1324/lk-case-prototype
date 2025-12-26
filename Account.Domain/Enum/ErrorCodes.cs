@@ -17,6 +17,7 @@ namespace Account.Domain.Enum
         GroupAlreadyExists = 81,
         GroupNotFound = 82,
         GroupDoesNotHaveThisDiscipline = 83,
+        GroupDoesNotHaveProle = 84,
 
 
 

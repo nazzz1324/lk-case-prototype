@@ -15,8 +15,13 @@ namespace Account.Application.Mapping
     {
         public ProfessionalRoleMapping()
         {
-            CreateMap<ProfessionalRole, ProfessionalRoleDto>();
-            CreateMap<CreateProfessionalRoleDto, ProfessionalRole>();
+            CreateMap<ProfessionalRole, ProfessionalRoleDto>()
+                .ForMember(dest => dest.Competencies,
+                    opt => opt.MapFrom(src => src.Competences.Select(c => c.Id).ToList()));
+
+            CreateMap<ProfessionalRolesDto, ProfessionalRole>()
+                .ForMember(dest => dest.Competences,
+                    opt => opt.MapFrom(src => src.Competencies.Select(id => new Competence { Id = id }).ToList()));
         }
     }
 }

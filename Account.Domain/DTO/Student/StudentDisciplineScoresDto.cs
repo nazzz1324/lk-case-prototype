@@ -10,6 +10,6 @@ namespace Account.Domain.DTO.Student
     {
         public string Name { get; set; }
         public List<DisciplineIndicatorScoreDto> Indicators { get; set; } = new();
-        public decimal? DisciplineScore { get; set; }
+        public decimal? Score { get; set; }
     }
 }

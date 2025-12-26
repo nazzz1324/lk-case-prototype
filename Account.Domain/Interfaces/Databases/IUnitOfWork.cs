@@ -1,4 +1,5 @@
-﻿using Account.Domain.Entity.AuthRole;
+﻿using Account.Domain.Entity;
+using Account.Domain.Entity.AuthRole;
 using Account.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -15,5 +16,7 @@ namespace Account.Domain.Interfaces.Databases
         IBaseRepository<User> Users { get; set; }
         IBaseRepository<Role> Roles { get; set; }
         IBaseRepository<UserRole> UserRoles { get; set; }
+        IBaseRepository<Student> Students { get; set; }
+        IBaseRepository<Teacher> Teachers { get; set; }
     }
 }

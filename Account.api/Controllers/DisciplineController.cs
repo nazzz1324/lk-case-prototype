@@ -21,9 +21,9 @@ namespace Account.api.Controllers
             _disciplineService = disciplineService;
         }
 
-        [HttpGet]
+        [HttpGet("getDisciplines")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<CollectionResult<CompetencesDto>>> GetDisciplinesAsync()
+        public async Task<ActionResult<CollectionResult<DisciplinesDto>>> GetDisciplinesAsync()
         {
             var response = await _disciplineService.GetDisciplinesAsync();
 
@@ -34,10 +34,10 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPost("createDiscipline")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<BaseResult<Competence>>> CreateDisciplineAsync([FromBody] CreateDisciplineDto dto)
+        public async Task<ActionResult<BaseResult<Discipline>>> CreateDisciplineAsync([FromBody] CreateDisciplineDto dto)
         {
             var response = await _disciplineService.CreateDisciplineAsync(dto);
 
@@ -48,10 +48,10 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteDiscipline")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<BaseResult<CompetenceDto>>> DeleteDisciplineAsync(long id)
+        public async Task<ActionResult<bool>> DeleteDisciplineAsync(long id)
         {
             var response = await _disciplineService.DeleteDisciplineAsync(id);
 
@@ -62,7 +62,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut]
+        [HttpPut("updateDiscipline")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<DisciplineDto>>> UpdateDisciplineAsync([FromBody] DisciplineDto dto)

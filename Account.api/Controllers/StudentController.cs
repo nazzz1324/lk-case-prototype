@@ -19,7 +19,7 @@ namespace Account.api.Controllers
             _studentService = studentService;
         }
 
-        [HttpGet("disciplines/{studentId}")]
+        [HttpGet("getDisciplines")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CollectionResult<StudentDisciplinesDto>>> GetStudentDisciplinesAsync(long studentId)
@@ -33,7 +33,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("competences/{studentId}")]
+        [HttpGet("getCompetences")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CollectionResult<StudentCompetencesDto>>> GetStudentCompetencesAsync(long studentId)
@@ -47,12 +47,39 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("scores/{studentId}/{disciplineId}")]
+        [HttpGet("getDisciplineScores")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<StudentDisciplineScoresDto>>> GetDisciplineScoresAsync(long studentId, long disciplineId)
         {
             var response = await _studentService.GetDisciplineScoresAsync(disciplineId, studentId);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+        [HttpGet("getCompetenceScores")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
+        public async Task<ActionResult<BaseResult<StudentCompetenceScoresDto>>> GetCompetenceScoresAsync(long studentId, long competenceId)
+        {
+            var response = await _studentService.GetCompetenceScoresAsync(competenceId, studentId);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpGet("getStudentProles")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] 
+        public async Task<ActionResult<BaseResult<StudentProlesDto>>> GetStudentProlesAsync(long studentId)
+        {
+            var response = await _studentService.GetStudentProlesAsync(studentId);
 
             if (response.IsSuccess)
             {

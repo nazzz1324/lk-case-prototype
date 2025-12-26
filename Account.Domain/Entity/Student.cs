@@ -17,11 +17,13 @@ namespace Account.Domain.Entity
         //public string? DateOfBirth { get; set; }
         //public string StudentStatus { get; set; }
         //public int EnrollmentYear { get; set; } = DateTime.Now.Year;
-        public long GroupId { get; set; }//
+        public long? GroupId { get; set; }//
+        public bool IsActive { get; set; } = true;
 
         public ICollection<DisciplineScore> DisciplineScores { get; set; } = new List<DisciplineScore>();//
         public ICollection<CompetenceScore> CompetenceScores { get; set; } = new List<CompetenceScore>();//
         public ICollection<IndicatorScore> IndicatorScores { get; set; } = new List<IndicatorScore>();//
+
         public User User { get; set; }//
         public Group Group { get; set; }//
     }

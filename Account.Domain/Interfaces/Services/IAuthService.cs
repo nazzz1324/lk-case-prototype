@@ -19,7 +19,7 @@ namespace Account.Domain.Interfaces.Services
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        Task<BaseResult<UserDto>> Register(RegisterUserDto dto);
+        Task<BaseResult<bool>> Register(RegisterUserDto dto);
         /// <summary>
         /// Авторизация пользователя
         /// </summary>

@@ -14,5 +14,7 @@ namespace Account.Domain.Interfaces.Services
         Task<CollectionResult<StudentDisciplinesDto>> GetStudentDisciplinesAsync(long studentId);
         Task<CollectionResult<StudentCompetencesDto>> GetStudentCompetencesAsync(long studentId);
         Task<BaseResult<StudentDisciplineScoresDto>> GetDisciplineScoresAsync(long disciplineId, long studentId);
+        Task<BaseResult<StudentCompetenceScoresDto>> GetCompetenceScoresAsync(long competenceId, long studentId);
+        Task<BaseResult<StudentProlesDto>> GetStudentProlesAsync(long studentId);
     }
 }

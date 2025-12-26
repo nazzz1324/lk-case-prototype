@@ -18,6 +18,7 @@ namespace Account.Domain.Dictionaries
             [ErrorCodes.GroupAlreadyExists] = 409,
             [ErrorCodes.GroupNotFound] = 404,
             [ErrorCodes.GroupDoesNotHaveThisDiscipline] = 401,
+            [ErrorCodes.GroupDoesNotHaveProle] = 401,
 
 
 

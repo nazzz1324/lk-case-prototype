@@ -1,4 +1,5 @@
-﻿using Account.DAL.Interceptor;
+﻿using Account.DAL.Configurations;
+using Account.DAL.Interceptor;
 using Account.DAL.Repositories;
 using Account.Domain.Entity;
 using Account.Domain.Entity.AuthRole;
@@ -47,9 +48,11 @@ namespace Account.DAL.DependencyInjection
             services.AddScoped<IBaseRepository<EducationForm>, BaseRepository<EducationForm>>();
             services.AddScoped<IBaseRepository<Faculty>, BaseRepository<Faculty>>();
             services.AddScoped<IBaseRepository<ProfessionalRole>, BaseRepository<ProfessionalRole>>();
+            services.AddScoped<IBaseRepository<CompetenceProle>, BaseRepository<CompetenceProle>>();
 
             services.AddScoped<IBaseRepository<GroupDiscipline>, BaseRepository<GroupDiscipline>>();
             services.AddScoped<IBaseRepository<TeacherDiscipline>, BaseRepository<TeacherDiscipline>>();
+            services.AddScoped<IBaseRepository<StudentIndicatorDisciplineScore>, BaseRepository<StudentIndicatorDisciplineScore>>();
         }
     }
 }

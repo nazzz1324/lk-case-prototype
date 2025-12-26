@@ -10,6 +10,7 @@ namespace Account.Domain.Entity
     public class ProfessionalRole
     {
         public long Id { get; set; }//
+        public string Index { get; set; }//
         public string Name { get; set; }//
         public string? Description { get; set; }//
 

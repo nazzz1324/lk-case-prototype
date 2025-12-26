@@ -47,7 +47,8 @@ namespace Account.Application.Services
                     Id = x.Id,
                     Name = x.Name,
                     Curator = x.Curator,
-                    StudentsCount = x.Students.Count
+                    studentCount = x.Students.Count,
+                    students = x.Students.Select(s => s.Id).ToList()
                 })
                 .ToArrayAsync();
 
@@ -91,10 +92,10 @@ namespace Account.Application.Services
             await _groupRepository.CreateAsync(group);
             await _groupRepository.SaveChangesAsync();
 
-            if (dto.StudentIds != null && dto.StudentIds.Any())
+            if (dto.students != null && dto.students.Any())
             {
                 var students = await _studentRepository.GetAll()
-                    .Where(x => dto.StudentIds.Contains(x.Id))
+                    .Where(x => dto.students.Contains(x.Id))
                     .ToListAsync();
                 foreach (var student in students)
                 {
@@ -105,7 +106,7 @@ namespace Account.Application.Services
 
             _logger.Information("Группа создана. Name: {Name}, Привязано студентов: {Count}",
                 group.Name,
-                dto.StudentIds?.Count ?? 0);
+                dto.students?.Count ?? 0);
 
             return new BaseResult<GroupDto>()
             {
@@ -158,7 +159,7 @@ namespace Account.Application.Services
             group.Curator = dto.Curator;
 
             var students = await _studentRepository.GetAll()
-                .Where(x => dto.StudentIds.Contains(x.Id))
+                .Where(x => dto.students.Contains(x.Id))
                 .ToListAsync();
 
             group.Students.Clear();

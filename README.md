@@ -1,4 +1,4 @@
-# Система оценки компетенций
+# Информационная система оценки компетенций студента
 ***
 
 ## Cтек
@@ -17,6 +17,23 @@
 | **Framer Motion** | 12.23.22 | Анимации и переходы |
 | **Lucide React** | 0.453.0 | Иконки SVG |
 
+### Backend
+
+| Технология | Версия | Назначение |
+| --- | --- | --- |
+| **Платформа** | .NET 8.0 | Основная среда выполнения для серверного приложения. |
+| **Фреймворк** | ASP.NET Core | 8.0 |
+| **Язык** | C# | - |
+| **Архитектура** | Clean Architecture / DDD | - |
+| **Стиль API** | REST API | - |
+| **ORM** | Microsoft.EntityFrameworkCore | 9.0.7 |
+| **База данных** | PostgreSQL | - |
+| **Маппинг** | AutoMapper | - |
+| **Аутентификация** | Microsoft.AspNetCore.Authentication.JwtBearer | 8.0.20 |
+| **API Документация** | Swashbuckle.AspNetCore | 6.4.0 |
+| **Логирование** | Serilog.AspNetCore | 9.0.0 |
+| **Версионирование** | Asp.Versioning.Mvc.ApiExplorer | 8.1.0 |
+
 ### Заглушки Back-end для Frontend
 
 | Технология | Версия | Назначение |
@@ -27,7 +44,7 @@
 
 ---
 
-## Структура fron-end части проекта
+## Структура Front-end части проекта
 
 ```
 /
@@ -111,6 +128,165 @@
 
 ---
 
-## Основной бек проекта
+## Структура Back-end части проекта
 
-Допишите здесь своё, те кто делает бек.
+```
+/
+├── Account.Domain/                  # 1. ДОМЕННЫЙ СЛОЙ (Ядро Бизнес-Логики)
+│   ├── Account.Domain.csproj        # Файл проекта .NET
+│
+│   ├── DTO/                         # Объекты Передачи Данных (Data Transfer Objects)
+│   │   ├── Competence/              # DTO для работы с компетенциями
+│   │   │   ├── CompetenceDto.cs
+│   │   │   ├── CompetencesDto.cs
+│   │   │   └── CreateCompetenceDto.cs
+│   │   │
+│   │   ├── Discipline/              # DTO для работы с дисциплинами
+│   │   │   ├── CreateDisciplineDto.cs
+│   │   │   ├── DisciplineDto.cs
+│   │   │   └── DisciplinesDto.cs
+│   │   │
+│   │   ├── Group/                   # DTO для работы с группами
+│   │   │   ├── CreateGroupDto.cs
+│   │   │   ├── GroupDto.cs
+│   │   │   └── GroupsDto.cs
+│   │   │
+│   │   ├── Indicator/               # DTO для работы с индикаторами
+│   │   │   ├── CreateIndicatorDto.cs
+│   │   │   ├── IndicatorDto.cs
+│   │   │   └── IndicatorsDto.cs
+│   │   │
+│   │   ├── ProfessionalRole/        # DTO для работы с профессиональными ролями
+│   │   │   ├── CreateProfessionalRoleDto.cs
+│   │   │   ├── ProfessionalRoleDto.cs
+│   │   │   └── ProfessionalRolesDto.cs
+│   │   │
+│   │   ├── Role/                    # DTO для работы с ролями
+│   │   │   ├── CreateRoleDto.cs
+│   │   │   └── RoleDto.cs
+│   │   │
+│   │   ├── Student/                 # DTO для работы с данными студентов
+│   │   │   ├── DisciplineIndicatorScoreDto.cs
+│   │   │   ├── StudentCompetencesDto.cs
+│   │   │   ├── StudentDisciplineScoresDto.cs
+│   │   │   └── StudentDisciplinesDto.cs
+│   │   │
+│   │   ├── Teacher/                 # DTO для работы с данными преподавателей (оценивание)
+│   │   │   ├── SaveScoresDto.cs
+│   │   │   ├── ScoreItemDto.cs
+│   │   │   ├── ScoringDataDto.cs
+│   │   │   ├── ScoringFilterDto.cs
+│   │   │   ├── StudentScoreDto.cs
+│   │   │   ├── TeacherDisciplineDto.cs
+│   │   │   └── TeacherIndicatorDto.cs
+│   │   │
+│   │   ├── User/                    # DTO для аутентификации и пользователей
+│   │   │   ├── LoginUserDto.cs
+│   │   │   ├── RegisterUserDto.cs
+│   │   │   └── UserDto.cs
+│   │   │
+│   │   ├── UserRole/                # DTO для управления ролями пользователей
+│   │   │   ├── DeleteUserRoleDto.cs
+│   │   │   ├── UpdateUserRoleDto.cs
+│   │   │   └── UserRoleDto.cs
+│   │   │
+│   │   └── TokenDto.cs              # DTO для передачи токена аутентификации
+│
+│   ├── Dictionaries/                # Словари и вспомогательные структуры
+│   │   └── ErrorDictionary.cs       # Словарь для маппинга кодов ошибок
+│
+│   ├── Entity/                      # Сущности Домена (Domain Entities)
+│   │   ├── AuthRoleEntities/        # Сущности, связанные с аутентификацией и ролями
+│   │   │   ├── Role.cs
+│   │   │   ├── User.cs
+│   │   │   ├── UserRole.cs
+│   │   │   └── UserToken.cs
+│   │   │
+│   │   ├── Competence.cs            # Сущность компетенции
+│   │   ├── CompetenceProle.cs       # Связь компетенции и профессиональной роли
+│   │   ├── CompetenceScore.cs       # Оценка компетенции
+│   │   ├── Discipline.cs            # Сущность дисциплины
+│   │   ├── DisciplineScore.cs       # Оценка дисциплины
+│   │   ├── EducationForm.cs         # Форма обучения
+│   │   ├── Faculty.cs               # Факультет
+│   │   ├── Group.cs                 # Группа
+│   │   ├── GroupDiscipline.cs       # Связь группы и дисциплины
+│   │   ├── Indicator.cs             # Сущность индикатора
+│   │   ├── IndicatorDiscipline.cs   # Связь индикатора и дисциплины
+│   │   ├── IndicatorScore.cs        # Оценка индикатора
+│   │   ├── ProfessionalRole.cs      # Профессиональная роль
+│   │   ├── Student.cs               # Сущность студента
+│   │   ├── Teacher.cs               # Сущность преподавателя
+│   │   └── TeacherDiscipline.cs     # Связь преподавателя и дисциплины
+│
+│   ├── Enum/                        # Перечисления Домена
+│   │   ├── Course.cs                # Курс обучения
+│   │   ├── EnrollmentStatus.cs      # Статус зачисления
+│   │   ├── ErrorCodes.cs            # Коды ошибок
+│   │   └── Roles.cs                 # Роли пользователей
+│
+│   ├── Interfaces/                  # Контракты и Интерфейсы
+│   │   ├── Databases/               # Интерфейсы для работы с БД
+│   │   │   ├── IStateSaveChanges.cs # Интерфейс для сохранения изменений
+│   │   │   └── IUnitOfWork.cs       # Паттерн Unit of Work
+│   │   │
+│   │   ├── Entites/                 # Интерфейсы для сущностей
+│   │   │   └── IPeople.cs           # Интерфейс для сущностей "людей"
+│   │   │
+│   │   ├── Repositories/            # Интерфейсы Репозиториев
+│   │   │   └── IBaseRepository.cs   # Базовый интерфейс репозитория
+│   │   │
+│   │   ├── Services/                # Интерфейсы Сервисов (Бизнес-логика)
+│   │   │   ├── IAuthService.cs
+│   │   │   ├── ICompetenceService.cs
+│   │   │   ├── IDisciplineService.cs
+│   │   │   ├── IGroupService.cs
+│   │   │   ├── IIndicatorService.cs
+│   │   │   ├── IProfessionalRoleService.cs
+│   │   │   ├── IRoleService.cs
+│   │   │   ├── IStudentService.cs
+│   │   │   ├── ITeacherService.cs
+│   │   │   └── ITokenService.cs
+│   │   │
+│   │   ├── Validations/             # Интерфейсы Валидаторов
+│   │   │   └── IBaseValidator.cs    # Базовый интерфейс валидатора
+│   │   │
+│   │   ├── IAuditable.cs            # Интерфейс для сущностей с аудитом
+│   │   └── IEntityID.cs             # Интерфейс для сущностей с ID
+│
+│   ├── Result/                      # Стандартизированные Объекты Результатов
+│   │   ├── BaseResult.cs            # Базовый класс результата
+│   │   ├── CollectionResult.cs      # Результат с коллекцией данных
+│   │   └── ExceptionResult.cs       # Результат с информацией об исключении
+│
+│   └── Settings/                    # Настройки Домена
+│       └── JwtSettings.cs           # Настройки JWT
+│
+└── Account.api/                     # 2. СЛОЙ ПРЕДСТАВЛЕНИЯ (API)
+    ├── Account.api.csproj           # Файл проекта .NET
+    ├── Account.api.http             # Файл для тестирования HTTP-запросов
+    │
+    ├── Controllers/                 # Контроллеры API
+    │   ├── AuthController.cs        # Аутентификация
+    │   ├── CompetenceController.cs  # Компетенции
+    │   ├── DisciplineController.cs  # Дисциплины
+    │   ├── GroupController.cs       # Группы
+    │   ├── IndicatorController.cs   # Индикаторы
+    │   ├── ProfessionalRoleController.cs # Профессиональные роли
+    │   ├── RoleController.cs        # Роли
+    │   ├── StudentController.cs     # Студенты
+    │   ├── TeacherController.cs     # Преподаватели
+    │   └── TokenController.cs       # Управление токенами
+    │
+    ├── Middlewares/                 # Промежуточное ПО
+    │   └── ExceptionHandlingMiddleware.cs # Обработка исключений
+    │
+    ├── Properties/                  # Свойства проекта
+    │   └── launchSettings.json      # Настройки запуска
+    │
+    ├── Program.cs                   # Точка входа приложения
+    ├── Startup.cs                   # Конфигурация приложения
+    ├── appsettings.Development.json # Конфигурация для разработки
+    └── appsettings.json             # Основная конфигурация
+```
+---

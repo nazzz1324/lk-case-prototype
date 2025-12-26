@@ -21,7 +21,7 @@ namespace Account.api.Controllers
             _competenceService = competenceService;
         }
 
-        [HttpGet]
+        [HttpGet("getCompetences")]
         [ProducesResponseType(typeof(CollectionResult<CompetencesDto>), 200)]
         public async Task<ActionResult<CollectionResult<CompetencesDto>>> GetCompetencesAsync()
         {
@@ -34,7 +34,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPost("createCompetence")]
         [ProducesResponseType(typeof(BaseResult<Competence>), 200)]
         [ProducesResponseType(typeof(BaseResult<Competence>), 400)]
         public async Task<ActionResult<BaseResult<Competence>>> CreateCompetenceAsync([FromBody] CreateCompetenceDto dto)
@@ -48,7 +48,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteCompetence")]
         [ProducesResponseType(typeof(BaseResult<CompetenceDto>), 200)]
         [ProducesResponseType(typeof(BaseResult<CompetenceDto>), 400)]
         public async Task<ActionResult<BaseResult<CompetenceDto>>> DeleteCompetenceAsync(long id)
@@ -62,7 +62,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut]
+        [HttpPut("updateCompetence")]
         [ProducesResponseType(typeof(BaseResult<CompetenceDto>), 200)]
         [ProducesResponseType(typeof(BaseResult<CompetenceDto>), 400)]
         public async Task<ActionResult<BaseResult<CompetenceDto>>> UpdateCompetenceAsync([FromBody] CompetenceDto dto)

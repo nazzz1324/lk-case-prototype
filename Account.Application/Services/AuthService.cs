@@ -1,12 +1,14 @@
-﻿using AutoMapper;
-using Account.Application.Resources;
+﻿using Account.Application.Resources;
 using Account.Domain.DTO;
 using Account.Domain.DTO.User;
+using Account.Domain.Entity;
+using Account.Domain.Entity.AuthRole;
 using Account.Domain.Enum;
 using Account.Domain.Interfaces.Databases;
 using Account.Domain.Interfaces.Repositories;
 using Account.Domain.Interfaces.Services;
 using Account.Domain.Result;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -16,7 +18,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Account.Domain.Entity.AuthRole;
 
 namespace Account.Application.Services
 {
@@ -110,30 +111,33 @@ namespace Account.Application.Services
                 {
                     AccessToken = accessToken,
                     RefreshToken = refreshToken,
+                    Role = userRoles.FirstOrDefault()?.Name ?? "Student",//добавил
+                    Id = user.Id // добавил ID пользователя
                 }
             };
         }
 
-        public async Task<BaseResult<UserDto>> Register(RegisterUserDto dto)
+        public async Task<BaseResult<bool>> Register(RegisterUserDto dto)
         {
-            if (dto.Password != dto.PasswordConfirm)
-            {
-                throw new ExceptionResult(
-                    ErrorCodes.PasswordNotEqualsPasswordConfirm,
-                    ErrorMessage.PasswordNotEqualsPasswordConfirm
-                );
-            }
+            // if (dto.Password != dto.PasswordConfirm)
+            // {
+            //     throw new ExceptionResult(
+            //         ErrorCodes.PasswordNotEqualsPasswordConfirm,
+            //         ErrorMessage.PasswordNotEqualsPasswordConfirm
+            //     );
+            // }
+
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Login == dto.Login);
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Login == dto.Email);
                 if (user != null)
                 {
                     throw new ExceptionResult(
                         ErrorCodes.UserAlreadyExists,
                         ErrorMessage.UserAlreadyExists
                     );
-
                 }
+
                 var hashUserPassword = HashPassword(dto.Password);
 
                 using (var transaction = await _unitOfWork.BeginTransactionAsync())
@@ -142,12 +146,40 @@ namespace Account.Application.Services
                     {
                         user = new User()
                         {
-                            Login = dto.Login,
+                            Login = dto.Email,
                             Password = hashUserPassword,
                         };
                         await _unitOfWork.Users.CreateAsync(user);
                         await _unitOfWork.SaveChangesAsync();
-                        var role = await _roleRepository.GetAll().FirstOrDefaultAsync(x => x.Name == nameof(Roles.Student));
+
+                        if (dto.RoleId == (long)Roles.Student)
+                        {
+                            var student = new Student()
+                            {
+                                Id = user.Id,
+                                Firstname = dto.Firstname,
+                                Lastname = dto.Lastname,
+                                Middlename = dto.Middlename,
+                                IsActive = true
+                            };
+                            await _unitOfWork.Students.CreateAsync(student);
+                        }
+                        else if (dto.RoleId == (long)Roles.Teacher)
+                        {
+                            var teacher = new Teacher()
+                            {
+                                Id = user.Id,
+                                Firstname = dto.Firstname,
+                                Lastname = dto.Lastname,
+                                Middlename = dto.Middlename,
+                                IsActive = true
+                            };
+                            await _unitOfWork.Teachers.CreateAsync(teacher);
+                        }
+
+                        await _unitOfWork.SaveChangesAsync();
+
+                        var role = await _roleRepository.GetAll().FirstOrDefaultAsync(x => x.Id == dto.RoleId);
                         if (role == null)
                         {
                             throw new ExceptionResult(
@@ -156,7 +188,7 @@ namespace Account.Application.Services
                             );
                         }
 
-                        UserRole userRole = new UserRole()
+                        var userRole = new UserRole()
                         {
                             UserId = user.Id,
                             RoleId = role.Id,
@@ -169,25 +201,27 @@ namespace Account.Application.Services
                     }
                     catch (Exception)
                     {
-
+                        await transaction.RollbackAsync();
+                        throw;
                     }
                 }
 
-                return new BaseResult<UserDto>
+                return new BaseResult<bool>
                 {
-                    Data = _mapper.Map<UserDto>(user)
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, ex.Message);
-                
+
                 throw new ExceptionResult(
                     ErrorCodes.InternalServerError,
                     ErrorMessage.InternalServerError
                 );
             }
         }
+        
         private string HashPassword(string password)
         {
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));

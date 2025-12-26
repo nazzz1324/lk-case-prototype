@@ -21,7 +21,7 @@ namespace Account.api.Controllers
             _indicatorService = indicatorService;
         }
 
-        [HttpGet]
+        [HttpGet("getIndicators")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CollectionResult<IndicatorsDto>>> GetIndicatorsAsync()
@@ -35,7 +35,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("search")]
+        [HttpGet("searchIndicators")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CollectionResult<IndicatorsDto>>> SearchIndicatorsAsync([FromQuery] string search)
@@ -49,7 +49,7 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPost("createIndicator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<IndicatorDto>>> CreateIndicatorAsync([FromBody] CreateIndicatorDto dto)
@@ -63,9 +63,9 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(BaseResult<IndicatorDto>), 200)]
-        [ProducesResponseType(typeof(BaseResult<IndicatorDto>), 400)]
+        [HttpDelete("deleteIndicator")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<IndicatorDto>>> DeleteIndicatorAsync(long id)
         {
             var response = await _indicatorService.DeleteIndicatorAsync(id);
@@ -77,9 +77,9 @@ namespace Account.api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut]
-        [ProducesResponseType(typeof(BaseResult<IndicatorDto>), 200)]
-        [ProducesResponseType(typeof(BaseResult<IndicatorDto>), 400)]
+        [HttpPut("updateIndicator")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<BaseResult<IndicatorDto>>> UpdateIndicatorAsync([FromBody] IndicatorDto dto)
         {
             var response = await _indicatorService.UpdateIndicatorAsync(dto);
