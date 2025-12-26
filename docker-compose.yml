@@ -5,14 +5,12 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      # Используем переменные окружения из Jenkins
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-lk_case2_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Проверка готовности БД
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-lk_case2_db}"]
       interval: 10s
       timeout: 5s
@@ -25,16 +23,15 @@ services:
     container_name: lk-case2-backend
     restart: always
     ports:
-      # Проброс порта для API
-      - "${PORT:-8999}:${PORT:-8999}"
+      # Порт по умолчанию изменен на 8199
+      - "${PORT:-8199}:${PORT:-8199}"
     environment:
-      # Настройки подключения к БД. 'db' - имя сервиса.
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-lk_case2_db}
-      ASPNETCORE_URLS: http://+:${PORT:-8999}
+      ASPNETCORE_URLS: http://+:${PORT:-8199}
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +43,6 @@ services:
     container_name: lk-case2-frontend
     restart: always
     ports:
-      # Фронтенд будет доступен на порту 80 хоста
       - "80:80"
     depends_on:
       backend:
